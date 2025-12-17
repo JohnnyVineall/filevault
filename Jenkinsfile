@@ -5,6 +5,10 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
+                dir ('src/azure-sa') {
+                    sh 'npm install'
+                    sh 'npm run lint'
+                }
             }
         }
         stage('Test') {
@@ -15,6 +19,10 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
+                dir ('src/azure-sa') {
+                  // sh 'npm start'
+                  echo 'Deployment coming soon...'
+                }
             }
         }
     }
