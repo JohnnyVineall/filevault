@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'NodeJS' // Name of the NodeJS installation in Jenkins
+    }
+
     stages {
         stage('Build') {
             steps {
