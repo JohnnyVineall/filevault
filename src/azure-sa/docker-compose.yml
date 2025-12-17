@@ -5,9 +5,6 @@ services:
     build: .
     ports:
       - "3000:3000"
-    environment:
-      - AZURE_STORAGE_ACCOUNT_NAME=${AZURE_STORAGE_ACCOUNT_NAME}
-      - AZURE_STORAGE_ACCOUNT_KEY=${AZURE_STORAGE_ACCOUNT_KEY}
     env_file:
       - .env
     restart: unless-stopped
