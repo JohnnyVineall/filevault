@@ -4,7 +4,8 @@
   "description": "FileVault application using Azure Blob Storage",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "lint": "eslint . && echo 'No linting errors found'"
   },
   "dependencies": {
     "@azure/storage-blob": "^12.29.1",
