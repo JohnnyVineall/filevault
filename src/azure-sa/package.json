@@ -11,7 +11,10 @@
     "@azure/storage-blob": "^12.29.1",
     "dotenv": "^8.6.0",
     "express": "^4.22.1",
-    "multer": "^1.4.4",
-    "eslint": "^8.45.0"
+    "multer": "^1.4.4"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0"
   }
 }
