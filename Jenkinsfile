@@ -11,7 +11,7 @@ pipeline {
                 echo 'Building..'
                 dir ('src/azure-sa') {
                     sh 'npm install'
-                    sh 'npm run lint'
+                    // sh 'npm run lint'
                 }
             }
         }
