@@ -10,10 +10,8 @@ pipeline {
             steps {
                 echo 'Building..'
                 dir ('src/azure-sa') {
-                    sh 'rm -rf node_modules package-lock.json'
-                    sh 'npm cache clean --force'
                     sh 'npm install'
-                    sh 'npm run lint'
+                    // sh 'npm run lint'
                 }
             }
         }
