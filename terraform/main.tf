@@ -15,6 +15,18 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "myTFResourceGroup"
+  name     = var.resource_group_name
   location = "uksouth"
+
+  tags = {
+    Environment = "Terraform Getting Started"
+    Team        = "DevOps"
+  }
+}
+
+resource "azurerm_virtual_network" "vnet" {
+  name                = "FilevaultJohnnyVNet"
+  address_space       = ["10.0.0.0/16"]
+  location            = "uksouth"
+  resource_group_name = var.resource_group_name
 }
