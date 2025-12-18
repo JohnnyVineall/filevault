@@ -11,6 +11,7 @@ const { BlobServiceClient, StorageSharedKeyCredential } = require('@azure/storag
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = '0.0.0.0';
 
 const upload = multer({ dest: 'uploads/' });
 
@@ -93,6 +94,6 @@ app.delete('/files/:key', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(PORT, HOST, () => {
+    console.log(`Server is running on http://${HOST}:${PORT}`);
 });
