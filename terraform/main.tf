@@ -67,6 +67,7 @@ resource "azurerm_container_group" "app" {
     secure_environment_variables = {
       "AZURE_STORAGE_ACCOUNT_NAME" = azurerm_storage_account.storage.name
       "AZURE_STORAGE_ACCOUNT_KEY"  = azurerm_storage_account.storage.primary_access_key
+      "AZURE_CONTAINER_NAME" = azurerm_storage_container.container.name
     }
 
   }
