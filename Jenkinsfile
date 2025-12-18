@@ -9,6 +9,9 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
+                sh 'rm -rf node_modules package-lock.json'
+                sh 'npm cache clean --force'
+                sh 'npm install'
                 dir ('src/azure-sa') {
                     sh 'npm install'
                     sh 'npm run lint'
