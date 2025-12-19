@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: filevault-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: filevault
+  template:
+    metadata:
+      labels:
+        app: filevault
+    spec:
+      containers:
+      - name: filevault-app
+        image: filevaultjohnnytf.azurecr.io/filevault-app:v1.0.3
+        ports:
+        - containerPort: 3000
+        env:
+        - name: AZURE_STORAGE_ACCOUNT_NAME
+          valueFrom:
+            secretKeyRef:
+              name: storage-secret
+              key: account-name
+        - name: AZURE_STORAGE_ACCOUNT_KEY
+          valueFrom:
+            secretKeyRef:
+              name: storage-secret
+              key: account-key
+        - name: AZURE_STORAGE_CONTAINER_NAME
+          valueFrom:
+            secretKeyRef:
+              name: storage-secret
+              key: container-name
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: filevault-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: filevault

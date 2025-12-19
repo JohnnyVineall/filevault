@@ -7,6 +7,6 @@ output "storage_primary_key" {
   sensitive = true
 }
 
-output "app_url" {
-  value = "http://${azurerm_container_group.app.fqdn}:3000"
-}
+# output "app_url" {
+#   value = "http://${azurerm_container_group.app.fqdn}:3000"
+# }
