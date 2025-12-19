@@ -2,8 +2,11 @@ name: Infrastructure creation workflow
 
 run-name: Creating infrastructure
 
-on: [push]
-
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 jobs:
   terraform-ing:
     runs-on: ubuntu-latest
