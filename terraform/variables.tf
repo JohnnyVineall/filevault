@@ -5,8 +5,3 @@ variable "resource_group_name" {
 variable "location" {
   default = "uksouth"
 }
-
-variable "acr_password" {
-  type      = string
-  sensitive = true
-}
