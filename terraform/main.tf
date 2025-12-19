@@ -1,5 +1,12 @@
 # 1. Terraform and azure config
 terraform {
+  backend "azurerm" {
+    resource_group_name  = "Filevault-Mgmt-RG"
+    storage_account_name = "filevaultmgmtstorage"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -79,7 +86,6 @@ resource "null_resource" "docker_push" {
 }
 
 # 6. Kubernetes cluster
-
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = "filevault-aks-v3"
   location            = "northeurope"
