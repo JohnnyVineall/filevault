@@ -1,8 +1,8 @@
 # 1. Terraform and azure config
 terraform {
   backend "azurerm" {
-    resource_group_name  = "FilevaultJohnnyTF"
-    storage_account_name = "filevaultjohnnystorage"
+    resource_group_name  = "Filevault-Mgmt-RG"
+    storage_account_name = "filevaultmgmtstorage"
     container_name       = "tfstate"
     key                  = "terraform.tfstate"
   }
