@@ -21,7 +21,7 @@ const blobServiceClient = new BlobServiceClient(
     sharedKeyCredential
 );
 
-const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_CONTAINER_NAME);
+const containerClient = blobServiceClient.getContainerClient(process.env.AZURE_STORAGE_CONTAINER_NAME);
 
 const filesDataPath = './filesData.json';
 
