@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: filevault-app
-        image: filevaultjohnnytf.azurecr.io/filevault-app:v1.0.2
+        image: filevaultjohnnytf.azurecr.io/filevault-app:v1.0.3
         ports:
         - containerPort: 3000
         env:
