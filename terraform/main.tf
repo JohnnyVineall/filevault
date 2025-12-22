@@ -66,24 +66,24 @@ resource "azurerm_container_registry" "acr" {
 }
 
 # Local deployment automation stuff
-resource "null_resource" "docker_push" {
-  depends_on = [azurerm_container_registry.acr]
+# resource "null_resource" "docker_push" {
+#   depends_on = [azurerm_container_registry.acr]
 
-  triggers = {
-    image_tag = "v1.0.3"
-  }
+#   triggers = {
+#     image_tag = "v1.0.3"
+#   }
 
-  provisioner "local-exec" {
-    # Move up one level from 'terraform' folder, then into 'src/azure-sa'
-    working_dir = "${path.module}/../src/azure-sa"
+  # provisioner "local-exec" {
+  #   # Move up one level from 'terraform' folder, then into 'src/azure-sa'
+  #   working_dir = "${path.module}/../src/azure-sa"
 
-    command = <<EOT
-      az acr login --name ${azurerm_container_registry.acr.name}
-      docker build --platform linux/amd64 -t ${azurerm_container_registry.acr.login_server}/filevault-app:${self.triggers.image_tag} .
-      docker push ${azurerm_container_registry.acr.login_server}/filevault-app:${self.triggers.image_tag}
-    EOT
-  }
-}
+  #   command = <<EOT
+  #     az acr login --name ${azurerm_container_registry.acr.name}
+  #     docker build --platform linux/amd64 -t ${azurerm_container_registry.acr.login_server}/filevault-app:${self.triggers.image_tag} .
+  #     docker push ${azurerm_container_registry.acr.login_server}/filevault-app:${self.triggers.image_tag}
+  #   EOT
+  # }
+# }
 
 # 6. Kubernetes cluster
 resource "azurerm_kubernetes_cluster" "aks" {
