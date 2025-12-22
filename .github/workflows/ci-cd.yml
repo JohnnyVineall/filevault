@@ -63,8 +63,12 @@ jobs:
 
       - name: Set up terraform
         uses: hashicorp/setup-terraform@v3
-        # with:
-        #   terraform_wrapper: false
+        with:
+          terraform_wrapper: false
+          terraform_version: "1.7.0"
+
+      - name: Verify terraform installation
+        run: terraform version
       
       - name: Get AKS credentials
         run: az aks get-credentials --resource-group FilevaultJohnnyTF --name filevault-aks-v3
