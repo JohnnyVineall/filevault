@@ -53,6 +53,11 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set up terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
       
       - name: Get AKS credentials
         run: az aks get-credentials --resource-group FilevaultJohnnyTF --name filevault-aks-v3
@@ -61,6 +66,7 @@ jobs:
         run: |
           cd terraform
           terraform init
+          
           STORAGE_NAME=$(terraform output -raw storage_account_name)
           STORAGE_KEY=$(terraform output -raw storage_account_key)
           CONTAINER_NAME=$(terraform output -raw container_name)
