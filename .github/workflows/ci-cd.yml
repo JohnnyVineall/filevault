@@ -45,6 +45,15 @@ jobs:
   deploy-to-aks:
     needs: docker-build-and-push-to-acr
     runs-on: ubuntu-latest
+
+
+    env:
+        ARM_CLIENT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}
+        ARM_CLIENT_SECRET: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}
+        ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+        ARM_TENANT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
+
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -53,14 +62,22 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Set up terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+          terraform_version: "1.7.0"
       
       - name: Get AKS credentials
         run: az aks get-credentials --resource-group FilevaultJohnnyTF --name filevault-aks-v3
 
       - name: Inject secrets and deploy to AKS
+        shell: bash
         run: |
           cd terraform
           terraform init
+
           STORAGE_NAME=$(terraform output -raw storage_account_name)
           STORAGE_KEY=$(terraform output -raw storage_account_key)
           CONTAINER_NAME=$(terraform output -raw container_name)
@@ -72,6 +89,24 @@ jobs:
             --from-literal=container-name=$CONTAINER_NAME \
             --dry-run=client -o yaml | kubectl apply -f -
 
-          sed -i "s|filevaultjohnnytf.azurecr.io/filevault-app:.*|filevaultjohnnytf.azurecr.io/filevault-app:${{ github.run_id }}|g" filevault-aks.yaml
+          sed -i "s|filevaultjohnnytf.azurecr.io/filevault-app:.*|filevaultjohnnytf.azurecr.io/filevault-app:${{ github.run_id }}|g" terraform/filevault-aks.yaml
 
-          kubectl apply -f filevault-aks.yaml
+          cat terraform/filevault-aks.yaml | grep "image:"
+
+          kubectl apply -f terraform/filevault-aks.yaml
+
+      - name: Verify pod deployment
+        run: kubectl rollout status deployment/filevault-deployment
+
+      - name: Verify service deployment
+        run: |
+            echo "Waiting for external IP..."
+            for i in {1..24}; do
+              IP=$(kubectl get service filevault-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+              if [ -n "$IP" ]; then
+                echo "Service is available at IP: $IP"
+                exit 0
+              fi
+              sleep 5
+            done
+            echo "Service IP not found" && exit 1
