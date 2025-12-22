@@ -66,9 +66,6 @@ jobs:
         with:
           terraform_wrapper: false
           terraform_version: "1.7.0"
-
-      - name: Verify terraform installation
-        run: terraform version
       
       - name: Get AKS credentials
         run: az aks get-credentials --resource-group FilevaultJohnnyTF --name filevault-aks-v3
@@ -90,6 +87,8 @@ jobs:
             --from-literal=container-name=$CONTAINER_NAME \
             --dry-run=client -o yaml | kubectl apply -f -
 
-          sed -i "s|filevaultjohnnytf.azurecr.io/filevault-app:.*|filevaultjohnnytf.azurecr.io/filevault-app:${{ github.run_id }}|g" filevault-aks.yaml
+          sed -i "s|filevaultjohnnytf.azurecr.io/filevault-app:.*|filevaultjohnnytf.azurecr.io/filevault-app:${{ github.run_id }}|g" terraform/filevault-aks.yaml
 
-          kubectl apply -f filevault-aks.yaml
+          cat terraform/filevault-aks.yaml | grep "image:"
+
+          kubectl apply -f terraform/filevault-aks.yaml
