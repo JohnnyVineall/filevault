@@ -45,6 +45,13 @@ jobs:
   deploy-to-aks:
     needs: docker-build-and-push-to-acr
     runs-on: ubuntu-latest
+
+    env:
+        ARM_CLIENT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientId }}
+        ARM_CLIENT_SECRET: ${{ fromJson(secrets.AZURE_CREDENTIALS).clientSecret }}
+        ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+        ARM_TENANT_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).tenantId }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -63,10 +70,11 @@ jobs:
         run: az aks get-credentials --resource-group FilevaultJohnnyTF --name filevault-aks-v3
 
       - name: Inject secrets and deploy to AKS
+        shell: bash
         run: |
           cd terraform
           terraform init
-          
+
           STORAGE_NAME=$(terraform output -raw storage_account_name)
           STORAGE_KEY=$(terraform output -raw storage_account_key)
           CONTAINER_NAME=$(terraform output -raw container_name)
