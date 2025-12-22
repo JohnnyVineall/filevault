@@ -92,3 +92,19 @@ jobs:
           cat terraform/filevault-aks.yaml | grep "image:"
 
           kubectl apply -f terraform/filevault-aks.yaml
+
+      - name: Verify pod deployment
+        run: kubectl rollout status deployment/filevault-deployment
+
+      - name: Verify service deployment
+        run: |
+            echo "Waiting for external IP..."
+            for i in {1..24}; do
+              IP=$(kubectl get service filevault-service -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+              if [ -n "$IP" ]; then
+                echo "Service is available at IP: $IP"
+                exit 0
+              fi
+              sleep 5
+            done
+            echo "Service IP not found" && exit 1
