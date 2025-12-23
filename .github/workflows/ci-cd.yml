@@ -110,3 +110,35 @@ jobs:
               sleep 5
             done
             echo "Service IP not found" && exit 1
+
+  install-monitoring:
+    needs: deploy-to-aks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get AKS Credentials
+        run: az aks get-credentials --resource-group FilevaultJohnnyTF --name filevault-aks-v3
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Deploy PLG Stack
+        run: |
+          # 1. Add Repos
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+          helm repo update
+
+          # 2. Install Prometheus & Grafana (The "Standard" Stack)
+          helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
+            --namespace monitoring --create-namespace \
+            --set grafana.adminPassword=${{ secrets.GRAFANA_PASSWORD }}
+
+          # 3. Install Loki (The Log Manager)
+          helm upgrade --install loki grafana/loki-stack \
+            --namespace monitoring \
+            --set loki.persistence.enabled=true,loki.persistence.size=10Gi
