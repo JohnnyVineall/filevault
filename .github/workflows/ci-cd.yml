@@ -128,17 +128,17 @@ jobs:
 
       - name: Deploy PLG Stack
         run: |
-          # 1. Add Repos
           helm repo add grafana https://grafana.github.io/helm-charts
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo update
 
-          # 2. Install Prometheus & Grafana (The "Standard" Stack)
+          # Install Prometheus/Grafana first
           helm upgrade --install monitoring prometheus-community/kube-prometheus-stack \
             --namespace monitoring --create-namespace \
             --set grafana.adminPassword=${{ secrets.GRAFANA_PASSWORD }}
 
-          # 3. Install Loki (The Log Manager)
+          # Install Loki WITHOUT an extra Grafana/Sidecar
           helm upgrade --install loki grafana/loki-stack \
             --namespace monitoring \
-            --set loki.persistence.enabled=true,loki.persistence.size=10Gi
+            --set loki.persistence.enabled=true \
+            --set grafana.enabled=false
