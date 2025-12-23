@@ -15,6 +15,13 @@ spec:
       containers:
       - name: filevault-app
         image: filevaultjohnnytf.azurecr.io/filevault-app:v1.0.3
+        resources:
+          requests:
+            cpu: "100m"     # Request 10% of a CPU core
+            memory: "128Mi" # Request 128MB of RAM
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
         ports:
         - containerPort: 3000
         env:
@@ -45,3 +52,22 @@ spec:
     targetPort: 3000
   selector:
     app: filevault
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: filevault-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: filevault-deployment
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50 # Scale up if average CPU hits 50%
